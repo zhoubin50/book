@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, HttpResponse
 from app01 import models
+from django.views import View
 
 # Create your views here.
 
@@ -9,6 +10,7 @@ def publisher_list(request):
     return render(request, "publisher_list.html", {"publisher_list": ret})
 
 
+# FBV(function base view)
 def add_publisher(request):
     err_msg = ""
     if request.method == 'POST':
@@ -23,6 +25,23 @@ def add_publisher(request):
     return render(request, "add_publisher.html", {"err_msg": err_msg})
 
 
+# CBV(class base view)
+class AddPublisher(View):
+    def get(self, request):
+        return render(request, "add_publisher.html")
+
+    def post(self, request):
+        new_publisher = request.POST.get('publisher_name')
+        if models.Publisher.objects.filter(name=new_publisher):
+            err_msg = "出版社名称重复"
+        elif new_publisher:
+            models.Publisher.objects.create(name=new_publisher)
+            return redirect("/publisher_list/")
+        else:
+            err_msg = "出版社名称不能为空"
+        return render(request, "add_publisher.html", {"err_msg": err_msg})
+
+
 def del_publisher(request):
     publisher_id = request.GET.get('id', None)
     if publisher_id:
@@ -33,9 +52,9 @@ def del_publisher(request):
     return redirect("/publisher_list/")
 
 
-def edit_publisher(request):
+def edit_publisher(request, edit_id):
+    publisher_id = edit_id
     if request.method == 'POST':
-        publisher_id = request.POST.get('id', None)
         new_name = request.POST.get('publisher_name')
         if publisher_id:
             publisher = models.Publisher.objects.get(id=publisher_id)
@@ -47,7 +66,6 @@ def edit_publisher(request):
             return redirect("/publisher_list/")
 
     elif request.method == 'GET':
-        publisher_id = request.GET.get('id', None)
         if publisher_id:
             if not models.Publisher.objects.filter(id=publisher_id):
                 err_msg = "编辑的出版社不存在"
@@ -135,17 +153,26 @@ def del_author(request):
     return redirect('/author_list/')
 
 
-def edit_author(request):
+def edit_author(request, edit_id):
+    author_id = edit_id
     if request.method == 'POST':
-        author_id = request.POST.get('author_id')
         new_name = request.POST.get('author_name')
         new_books = request.POST.getlist('books')
-        edit_author = models.Author.objects.get(id=author_id)
-        edit_author.name = new_name
-        edit_author.book.set(new_books)
-        edit_author.save()
+        author = models.Author.objects.get(id=author_id)
+        author.name = new_name
+        author.book.set(new_books)
+        author.save()
         return redirect('/author_list/')
     books = models.Book.objects.all()
-    author_id = request.GET.get('id')
     author = models.Author.objects.get(id=author_id)
     return render(request, 'edit_author.html', {'author': author, 'book_list': books})
+
+
+# def upload_file(request):
+#     if request.method == 'POST':
+#         file_name = request.FILES.get('file_name').name
+#         with open(file_name, 'wb') as f:
+#             for i in request.FILES.get('file_name').chunks():
+#                 f.write(i)
+#             return HttpResponse("上传文件完成")
+#     return render(request, 'upload_file.html')

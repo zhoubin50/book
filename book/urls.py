@@ -19,19 +19,23 @@ from app01 import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^publisher_list/', views.publisher_list),
-    url(r'^add_publisher/', views.add_publisher),
-    url(r'^del_publisher/', views.del_publisher),
-    url(r'^edit_publisher/', views.edit_publisher),
+    url(r'^publisher_list/$', views.publisher_list),
+    # url(r'^add_publisher/', views.add_publisher),
+    url(r'^add_publisher/$',views.AddPublisher.as_view()),
+    url(r'^del_publisher/$', views.del_publisher),
+    url(r'^edit_publisher/([0-9]+)/$', views.edit_publisher),
     # 书籍相关
-    url(r'^book_list/', views.book_list),
-    url(r'^add_book/', views.add_book),
-    url(r'^del_book/', views.del_book),
-    url(r'^edit_book', views.edit_book),
+    url(r'^book_list/$', views.book_list),
+    url(r'^add_book/$', views.add_book),
+    url(r'^del_book/$', views.del_book),
+    url(r'^edit_book/$', views.edit_book),
 
     # 作者相关
-    url(r'^author_list/', views.author_list),
-    url(r'^add_author/', views.add_author),
-    url(r'^del_author/', views.del_author),
-    url(r'^edit_author/', views.edit_author),
+    url(r'^author_list/$', views.author_list),
+    url(r'^add_author/$', views.add_author),
+    url(r'^del_author/$', views.del_author),
+    url(r'^edit_author/([0-9]+)/$', views.edit_author),
+
+    # 测试
+    # url(r'^upload_file/$', views.upload_file),
 ]

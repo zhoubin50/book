@@ -26,9 +26,8 @@
     <h3 class="panel-title">编辑作者</h3>
   </div>
 <div class="panel-body">
-        <form action="/edit_author/" method="post">
+        <form action="/edit_author/{{ author.id }}/" method="post">
   <div class="form-group">
-      <input style="display: none" type="text" name="author_id", value="{{ author.id }}">
     <label for="exampleInputName2">姓名：</label>
     <input type="text" class="form-control" id="exampleInputName2" name="author_name" value="{{ author.name }}">
   </div>
